@@ -1,4 +1,4 @@
-# Robot Skills - Versión Simple 🤖
+# Robot Skills
 
 ## ¿Qué puede hacer mi robot?
 
@@ -44,16 +44,5 @@ rclpy.shutdown()
 ## Cómo ejecutar
 
 ```bash
-python3 ejemplo_simple.py
+python3 ejemplo.py
 ```
-
-## Tips para principiantes
-
-- **Siempre** usa `rclpy.init()` al inicio
-- **Siempre** usa `robot.destroy_node()` y `rclpy.shutdown()` al final
-- Para ir a un punto: `robot.go_to_pose(x, y)`
-- Para rotar: `robot.rotate(velocidad, tiempo)`
-- Las coordenadas (x, y) están en metros
-- La velocidad de rotación está en radianes/segundo
-
-¡Ya está! Súper simple 😊
