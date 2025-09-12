@@ -30,7 +30,7 @@ class RobotSkills(Node):
     # 2. Enviar al robot a una pose
     def go_to_pose(self, x, y, yaw=0.0):
         goal_pose = PoseStamped()
-        goal_pose.header.frame_id = 'map'
+        goal_pose.header.frame_id = 'odom'
         goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
 
         goal_pose.pose.position.x = x
