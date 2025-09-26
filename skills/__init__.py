@@ -1,29 +1,20 @@
 """
-Robot Skills Package for ROS2 - ULTRA SIMPLE VERSION
+Robot Skills Package for ROS2 - Modular Navigation System
 
-Solo las 4 skills esenciales para empezar.
+Skills básicas de navegación + navegación semántica modular.
 """
 
-from .base_skill import BaseSkill, SkillStatus
-from .skill_manager import SkillManager
-
-# LAS 4 SKILLS ESENCIALES
-from .essential_skills import (
-    SimpleMoveSkill,
-    SimpleRotateSkill, 
-    SimpleStopSkill,
-    SimpleWaitSkill
-)
+from .skills import RobotSkills
+from .semantic_navigation import SemanticNavigation
+from .advanced_navigation import AdvancedNavigation
 
 __all__ = [
-    # Framework básico
-    'BaseSkill',
-    'SkillStatus', 
-    'SkillManager',
+    # Skills básicas de navegación
+    'RobotSkills',
     
-    # Las 4 skills esenciales
-    'SimpleMoveSkill',
-    'SimpleRotateSkill',
-    'SimpleStopSkill', 
-    'SimpleWaitSkill'
+    # Navegación semántica avanzada
+    'SemanticNavigation',
+    
+    # Funciones avanzadas de navegación
+    'AdvancedNavigation'
 ]
