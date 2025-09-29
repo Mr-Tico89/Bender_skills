@@ -39,6 +39,7 @@ class RobotSkills(Node):
         self.is_executing_goal = False
         self.current_velocity = Twist()
         self.saved_poses_file = "saved_poses.npy"
+        self.rotation_timer = None
         
         # Inicializar poses guardadas (el mapeo lo maneja otro componente)
         self.load_saved_poses()
@@ -189,7 +190,6 @@ class RobotSkills(Node):
         return is_moving or nav_in_progress
 
 
-    # ¿Llegó a la meta?
     def reached(self, target_x: float = None, target_y: float = None, 
                 position_tolerance: float = 0.3, angle_tolerance: float = 0.2) -> bool:
         """
@@ -237,22 +237,52 @@ class RobotSkills(Node):
         return True
 
 
-    # Rotar en el lugar
-    def rotate(self, angular_speed=0.5, duration=3.0):
-        msg = Twist()
-        msg.angular.z = angular_speed
-        self.cmd_pub.publish(msg)
+    def rotate(self, angular_speed: float = 0.5, duration: float = 3.0) -> bool:
+        """
+        Rota el robot en el lugar de manera no bloqueante.
+        
+        Args:
+            angular_speed: Velocidad angular en rad/s (positiva = izquierda)
+            duration: Duración en segundos
+            
+        Returns:
+            True si inició la rotación, False en caso contrario
+        """
 
-        # Esperar durante la duración especificada
-        time.sleep(duration)
-        self.stop()
-        self.get_logger().info(f"Rotación completada durante {duration} s")
+        try:
+            msg = Twist()
+            msg.angular.z = angular_speed
+            
+            # Publicar comando de rotación por la duración especificada
+            self.cmd_pub.publish(msg)
+            
+            # Programar parada después de la duración (usando timer)
+            self.rotation_timer = self.create_timer(duration, self.stop_rotation_callback)
+            
+            self.get_logger().info(
+                f"Iniciando rotación: {math.degrees(angular_speed * duration):.1f}° en {duration:.1f}s"
+            )
+
+            return True
+            
+        except Exception as e:
+            self.get_logger().error(f"Error en rotación: {e}")
+            self.stop()
+            return False
 
 
     # Función auxiliar para detener el robot
     def stop(self):
         msg = Twist()
         self.cmd_pub.publish(msg)
+    
+
+    def stop_rotation_callback(self):
+        """Callback para detener rotación automáticamente"""
+        self.stop()
+        if self.rotation_timer:
+            self.rotation_timer.destroy()
+            self.rotation_timer = None
 
 
     # ===== NUEVAS FUNCIONES DE NAVEGACIÓN AVANZADA =====
@@ -295,8 +325,6 @@ class RobotSkills(Node):
         except Exception as e:
             self.get_logger().error(f"Error guardando pose: {e}")
             return False
-
-    # Nota: is_in_room() e is_in_map() son manejadas por el componente de mapeo
 
 
     def clear_costmaps(self) -> bool:

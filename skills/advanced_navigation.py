@@ -27,50 +27,7 @@ class AdvancedNavigation:
             robot_skills: Instancia de RobotSkills para usar las funciones básicas
         """
         self.robot = robot_skills
-        self.rotation_timer = None
-    
-
-    # Nota: go_to_pose_stamped ahora está integrado en robot.go_to_pose()
-
-
-    def rotate_improved(self, angular_speed: float = 0.5, duration: float = 3.0) -> bool:
-        """
-        Rota el robot en el lugar (versión mejorada y no bloqueante).
-        
-        Args:
-            angular_speed: Velocidad angular en rad/s (positiva = izquierda)
-            duration: Duración en segundos
-            
-        Returns:
-            True si inició la rotación, False en caso contrario
-        """
-        try:
-            msg = Twist()
-            msg.angular.z = angular_speed
-            
-            # Publicar comando de rotación por la duración especificada
-            self.robot.cmd_pub.publish(msg)
-            
-            # Programar parada después de la duración (usando timer)
-            self.rotation_timer = self.robot.create_timer(duration, self.stop_rotation_callback)
-            
-            self.robot.get_logger().info(
-                f"Iniciando rotación: {math.degrees(angular_speed * duration):.1f}° en {duration:.1f}s"
-            )
-            return True
-            
-        except Exception as e:
-            self.robot.get_logger().error(f"Error en rotación: {e}")
-            self.robot.stop()
-            return False
-
-
-    def stop_rotation_callback(self):
-        """Callback para detener rotación automáticamente"""
-        self.robot.stop()
-        if self.rotation_timer:
-            self.rotation_timer.destroy()
-            self.rotation_timer = None
+ 
 
 
 def main():
