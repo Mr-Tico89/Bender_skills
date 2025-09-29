@@ -8,7 +8,7 @@ Este archivo está separado del código principal para mantener skills.py limpio
 import rclpy
 import math
 import time
-from skills.skills import RobotSkills
+from navegation.basicNav import RobotSkills
 
 
 def demo_basic_skills(robot):

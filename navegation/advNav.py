@@ -161,7 +161,7 @@ class AdvancedNavigation:
 
 
 def main():
-    """Ejemplo de uso de navegación avanzada - gestión de poses y costmaps"""
+    """Ejemplo de uso de navegación avanzada - gestión de costmaps"""
     rclpy.init()
     
     try:

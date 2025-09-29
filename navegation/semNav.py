@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import rclpy
 import math
-
-from .skills import RobotSkills
+from .basicNav import RobotSkills
 
 
 class SemanticNavigation:

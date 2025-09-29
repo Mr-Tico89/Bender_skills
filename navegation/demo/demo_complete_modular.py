@@ -7,7 +7,7 @@ Muestra el uso de RobotSkills, SemanticNavigation y AdvancedNavigation por separ
 import rclpy
 import math
 import time
-from skills import RobotSkills, SemanticNavigation, AdvancedNavigation
+from navegation import RobotSkills, SemanticNavigation, AdvancedNavigation
 
 
 def demo_basic_navigation(robot):

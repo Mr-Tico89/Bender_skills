@@ -7,7 +7,7 @@ Demuestra cómo usar RobotSkills (básico) + SemanticNavigation (semántico) por
 
 import rclpy
 import math
-from skills import RobotSkills, SemanticNavigation
+from navegation import RobotSkills, SemanticNavigation
 
 
 def demo_basic_navigation():

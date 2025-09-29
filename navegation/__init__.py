@@ -7,9 +7,9 @@ Arquitectura modular organizada por complejidad:
 - AdvancedNavigation: Gestión de poses y funciones avanzadas
 """
 
-from .skills import RobotSkills
-from .semantic_navigation import SemanticNavigation
-from .advanced_navigation import AdvancedNavigation
+from .basicNav import RobotSkills
+from .semNav import SemanticNavigation
+from .advNav import AdvancedNavigation
 
 __all__ = [
     # Navegación básica (coordenadas, movimiento, estado)

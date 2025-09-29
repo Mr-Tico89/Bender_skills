@@ -2,7 +2,7 @@
 
 import rclpy
 import math
-from skills.skills import RobotSkills
+from navegation.basicNav import RobotSkills
 
 def main():
     # Inicializar ROS2
