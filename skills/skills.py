@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped, Twist
@@ -5,11 +6,9 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from tf_transformations import quaternion_from_euler, euler_from_quaternion
 from nav2_msgs.srv import ClearEntireCostmap
 import math
-import json
-import numpy as np
-import os
 import time
-from typing import Dict, Optional, List
+from typing import Dict, Optional
+
 
 class RobotSkills(Node):
     def __init__(self):

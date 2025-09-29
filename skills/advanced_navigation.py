@@ -1,17 +1,8 @@
-"""
-Funciones avanzadas de navegación para RobotSkills
-Complementa las funciones básicas con capacidades más sofisticadas
-"""
-
+#!/usr/bin/env python3
 import rclpy
-from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped, Twist
 from nav2_msgs.srv import ClearEntireCostmap
 import math
-import json
 import os
-import time
-import numpy as np
 from typing import Dict, Optional, List
 from .skills import RobotSkills
 
@@ -21,6 +12,7 @@ class AdvancedNavigation:
     Clase que proporciona funciones avanzadas de navegación
     que extienden las capacidades básicas de RobotSkills.
     """
+    
     
     def __init__(self, robot_skills: RobotSkills):
         """

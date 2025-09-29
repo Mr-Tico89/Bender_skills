@@ -1,13 +1,7 @@
 #!/usr/bin/env python3
-
-"""
-Módulo de Navegación Semántica para Robot Skills.
-Maneja la navegación por nombres de ubicaciones, approach y look.
-"""
-
 import rclpy
 import math
-from typing import Dict, Optional
+
 from .skills import RobotSkills
 
 
@@ -26,6 +20,7 @@ class SemanticNavigation:
         """
         self.robot = robot_skills
         
+
     def go(self, location_name: str) -> bool:
         """
         Navegación semántica - ir a una ubicación por nombre.
@@ -47,6 +42,7 @@ class SemanticNavigation:
         else:
             self.robot.get_logger().warn(f"Ubicación '{location_name}' no encontrada en poses guardadas")
             return False
+
 
     def approach(self, location_name: str, approach_distance: float = 1.0) -> bool:
         """
@@ -91,6 +87,7 @@ class SemanticNavigation:
         )
         return self.robot.go_to_pose(approach_x, approach_y, approach_yaw)
 
+
     def look(self, location_name: str) -> bool:
         """
         Mira hacia una habitación o ubicación específica.
@@ -107,6 +104,7 @@ class SemanticNavigation:
             
         target_pose = self.robot.saved_poses[location_name]
         return self.look_to_pose(target_pose["x"], target_pose["y"])
+
 
     def look_to_pose(self, target_x: float, target_y: float, angular_speed: float = 0.5) -> bool:
         """
@@ -150,6 +148,7 @@ class SemanticNavigation:
         
         # Usar la rotación mejorada del robot
         return self.robot.rotate_improved(rotation_speed, duration)
+
 
     def get_available_locations(self) -> list:
         """Retorna lista de ubicaciones disponibles para navegación semántica"""
