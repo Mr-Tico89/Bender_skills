@@ -1,24 +1,41 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>robot_skills</name>
-  <version>1.0.0</version>
-  <description>Skills simples para robot en ROS2</description>
+  <name>bender_skills</name>
+  <version>2.0.0</version>
+  <description>Sistema de navegación robótica modular para ROS2 - Bender Skills con arquitectura de 3 capas (Básico, Avanzado, Semántico)</description>
+  <maintainer email="robotica@bender.com">Robotica Team</maintainer>
   <license>MIT</license>
 
+  <!-- Core ROS2 dependencies -->
   <depend>rclpy</depend>
-  <depend>geometry_msgs</depend>
+  
+  <!-- Navigation and geometry -->
   <depend>nav2_simple_commander</depend>
-  <depend>tf_transformations</depend>
   <depend>nav2_msgs</depend>
-  <depend>std_srvs</depend>
+  <depend>geometry_msgs</depend>
+  
+  <!-- Transformations -->
+  <depend>tf_transformations</depend>
   <depend>tf2_ros</depend>
   <depend>tf2_geometry_msgs</depend>
+  
+  <!-- Services -->
+  <depend>std_srvs</depend>
+  
+  <!-- Python scientific computing -->
+  <exec_depend>python3-numpy</exec_depend>
+  
+  <!-- Build dependencies -->
+  <build_depend>ament_cmake</build_depend>
 
+  <!-- Testing dependencies -->
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_python</build_type>
