@@ -262,56 +262,57 @@ class RobotSkills(Node):
 
     def clear_costmaps(self) -> bool:
         """
-        Resetea los costmaps local y global del stack de navegación.
+        Resetea los costmaps local y global del stack de navegación en paralelo.
         
         Returns:
             True si se limpiaron exitosamente, False en caso contrario
         """
         
-        success = True
+        # Verificar que ambos servicios estén disponibles
+        global_available = self.clear_costmap_client.wait_for_service(timeout_sec=5.0)
+        local_available = self.clear_local_costmap_client.wait_for_service(timeout_sec=5.0)
         
-        # Limpiar costmap global
-        if self.clear_costmap_client.wait_for_service(timeout_sec=5.0):
-            try:
-                request = ClearEntireCostmap.Request()
-                future = self.clear_costmap_client.call_async(request)
-                rclpy.spin_until_future_complete(self, future, timeout_sec=5.0)
-                
-                if future.result() is not None:
-                    self.get_logger().info("Costmap global limpiado")
-                    
-                else:
-                    self.get_logger().warn("Error limpiando costmap global")
-                    success = False
-            
-            except Exception as e:
-                self.get_logger().error(f"Error en servicio de costmap global: {e}")
-                success = False
-        
-        else:
+        if not global_available:
             self.get_logger().warn("Servicio de costmap global no disponible")
-            success = False
             
-        # Limpiar costmap local
-        if self.clear_local_costmap_client.wait_for_service(timeout_sec=5.0):
-            try:
-                request = ClearEntireCostmap.Request()
-                future = self.clear_local_costmap_client.call_async(request)
+        if not local_available:
+            self.get_logger().warn("Servicio de costmap local no disponible")
+            
+        if not (global_available or local_available):
+            return False
+        
+        # Iniciar ambas solicitudes en paralelo
+        futures = []
+        
+        try:
+            # Lanzar solicitud para costmap global
+            if global_available:
+                global_request = ClearEntireCostmap.Request()
+                global_future = self.clear_costmap_client.call_async(global_request)
+                futures.append(('global', global_future))
+            
+            # Lanzar solicitud para costmap local
+            if local_available:
+                local_request = ClearEntireCostmap.Request()
+                local_future = self.clear_local_costmap_client.call_async(local_request)
+                futures.append(('local', local_future))
+            
+            # Esperar que ambos terminen
+            success = True
+            for costmap_type, future in futures:
                 rclpy.spin_until_future_complete(self, future, timeout_sec=5.0)
                 
                 if future.result() is not None:
-                    self.get_logger().info("Costmap local limpiado")
+                    self.get_logger().info(f"Costmap {costmap_type} limpiado")
                 else:
-                    self.get_logger().warn("Error limpiando costmap local")
+                    self.get_logger().warn(f"Error limpiando costmap {costmap_type}")
                     success = False
-            except Exception as e:
-                self.get_logger().error(f"Error en servicio de costmap local: {e}")
-                success = False
-        else:
-            self.get_logger().warn("Servicio de costmap local no disponible")
-            success = False
             
-        return success
+            return success
+            
+        except Exception as e:
+            self.get_logger().error(f"Error limpiando costmaps: {e}")
+            return False
 
 
     def wait_for_result(self, timeout: float = 60.0) -> bool:
