@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Este directorio contiene **tests especializados** para cada módulo del sistema de navegación, permitiendo probar funciones específicas de manera independiente.
+Este directorio contiene **tests** para cada módulo del sistema de navegación, permitiendo probar funciones específicas de manera independiente.
 
 ## Tests Especializados por Módulo
 
@@ -52,16 +52,8 @@ python3 semTest.py
 5. `patrol()` - Patrullar ruta con ciclos
 6. `create_route()` - Crear ruta personalizada
 
-## Ventajas de Tests Separados
-
-- **Enfoque específico**: Cada test se concentra en un módulo
-- **Depuración más fácil**: Aisla problemas por módulo
-- **Desarrollo modular**: Probar funciones según se desarrollan
-- **Tiempo optimizado**: Ejecutar solo lo que necesitas probar
-- **Menos dependencias**: basicTest solo necesita RobotSkills
 
 ## Uso Recomendado
-
 ### Durante Desarrollo
 ```bash
 # Desarrollando funciones básicas
@@ -100,11 +92,6 @@ python3 basicTest.py && python3 advTest.py && python3 semTest.py
 - Nav2 activo y configurado
 - Mapa cargado
 - Módulos correspondientes funcionando
-
-### Por Test
-- **basicTest.py**: Solo requiere `navegation.basicNav`
-- **advTest.py**: Requiere `navegation.basicNav` + `navegation.advNav`
-- **semTest.py**: Requiere los 3 módulos (crea ubicaciones de prueba)
 
 ## Notas
 
