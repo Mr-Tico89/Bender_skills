@@ -29,27 +29,9 @@ class AdvancedNavigation:
         self.robot = robot_skills
         self.rotation_timer = None
     
-    def go_to_pose_stamped(self, pose_stamped: PoseStamped) -> bool:
-        """
-        Navega a una pose usando un mensaje PoseStamped completo.
-        
-        Args:
-            pose_stamped: Mensaje PoseStamped con la pose objetivo
-            
-        Returns:
-            True si inició la navegación, False en caso contrario
-        """
-        try:
-            self.robot.navigator.goToPose(pose_stamped)
-            self.robot.is_executing_goal = True
-            
-            pos = pose_stamped.pose.position
-            self.robot.get_logger().info(f"Navegando a pose stamped: ({pos.x:.2f}, {pos.y:.2f})")
-            return True
-            
-        except Exception as e:
-            self.robot.get_logger().error(f"Error navegando a pose stamped: {e}")
-            return False
+
+    # Nota: go_to_pose_stamped ahora está integrado en robot.go_to_pose()
+
 
     def rotate_improved(self, angular_speed: float = 0.5, duration: float = 3.0) -> bool:
         """
@@ -81,6 +63,7 @@ class AdvancedNavigation:
             self.robot.get_logger().error(f"Error en rotación: {e}")
             self.robot.stop()
             return False
+
 
     def stop_rotation_callback(self):
         """Callback para detener rotación automáticamente"""

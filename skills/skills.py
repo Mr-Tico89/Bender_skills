@@ -88,24 +88,60 @@ class RobotSkills(Node):
 
 
     
-    def go_to_pose(self, x, y, yaw=0.0):
-        # Enviar al robot a una pose
-        goal_pose = PoseStamped()
-        goal_pose.header.frame_id = 'odom'
-        goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
+    def go_to_pose(self, x=None, y=None, yaw=0.0, pose_stamped=None, frame_id='map'):
+        """
+        Navega a una pose usando coordenadas individuales O un PoseStamped completo.
+        
+        Args:
+            x, y, yaw: Coordenadas individuales (si no se usa pose_stamped)
+            pose_stamped: PoseStamped completo (alternativa a x,y,yaw)
+            frame_id: Marco de referencia ('map', 'odom', 'base_link')
+            
+        Returns:
+            True si inició la navegación, False en caso contrario
+        """
+        try:
+            # Caso 1: Se proporciona un PoseStamped completo
+            if pose_stamped is not None:
+                self.navigator.goToPose(pose_stamped)
+                pos = pose_stamped.pose.position
+                self.get_logger().info(
+                    f"Navegando a pose stamped: ({pos.x:.2f}, {pos.y:.2f}) "
+                    f"en frame '{pose_stamped.header.frame_id}'"
+                )
+                
+            # Caso 2: Se proporcionan coordenadas individuales
+            elif x is not None and y is not None:
+                goal_pose = PoseStamped()
+                goal_pose.header.frame_id = frame_id
+                goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
 
-        goal_pose.pose.position.x = x
-        goal_pose.pose.position.y = y
+                goal_pose.pose.position.x = float(x)
+                goal_pose.pose.position.y = float(y)
+                goal_pose.pose.position.z = 0.0
 
-        q = quaternion_from_euler(0, 0, yaw)
-        goal_pose.pose.orientation.x = q[0]
-        goal_pose.pose.orientation.y = q[1]
-        goal_pose.pose.orientation.z = q[2]
-        goal_pose.pose.orientation.w = q[3]
+                q = quaternion_from_euler(0, 0, yaw)
+                goal_pose.pose.orientation.x = q[0]
+                goal_pose.pose.orientation.y = q[1]
+                goal_pose.pose.orientation.z = q[2]
+                goal_pose.pose.orientation.w = q[3]
 
-        self.navigator.goToPose(goal_pose)
-        self.is_executing_goal = True
-        self.get_logger().info(f"Navegando hacia: ({x:.2f}, {y:.2f}) con yaw={yaw:.2f}")
+                self.navigator.goToPose(goal_pose)
+                self.get_logger().info(
+                    f"Navegando hacia: ({x:.2f}, {y:.2f}) con yaw={yaw:.2f} "
+                    f"en frame '{frame_id}'"
+                )
+            else:
+                self.get_logger().error("Debe proporcionar coordenadas (x,y) O un pose_stamped")
+                return False
+                
+            self.is_executing_goal = True
+            return True
+            
+        except Exception as e:
+            self.get_logger().error(f"Error en navegación: {e}")
+            return False
+
 
     # Cancelar navegación (versión mejorada)
     def cancel(self) -> bool:
@@ -129,6 +165,7 @@ class RobotSkills(Node):
             self.get_logger().error(f"Error cancelando navegación: {e}")
             return False
 
+
     # ¿Se está moviendo?
     def is_moving(self, linear_threshold: float = 0.01, angular_threshold: float = 0.01) -> bool:
         """
@@ -150,6 +187,7 @@ class RobotSkills(Node):
         nav_in_progress = self.is_executing_goal and not self.navigator.isTaskComplete()
         
         return is_moving or nav_in_progress
+
 
     # ¿Llegó a la meta?
     def reached(self, target_x: float = None, target_y: float = None, 
@@ -197,6 +235,7 @@ class RobotSkills(Node):
             
         # No hay tarea en curso ni target específico
         return True
+
 
     # Rotar en el lugar
     def rotate(self, angular_speed=0.5, duration=3.0):
@@ -274,7 +313,7 @@ class RobotSkills(Node):
         
         if not global_available:
             self.get_logger().warn("Servicio de costmap global no disponible")
-            
+
         if not local_available:
             self.get_logger().warn("Servicio de costmap local no disponible")
             
@@ -325,6 +364,7 @@ class RobotSkills(Node):
         Returns:
             True si completó exitosamente, False si falló o timeout
         """
+
         if not self.is_executing_goal:
             self.get_logger().warn("No hay ninguna tarea en ejecución para esperar")
             return True
@@ -343,6 +383,7 @@ class RobotSkills(Node):
                 if result == TaskResult.SUCCEEDED:
                     self.get_logger().info("Tarea completada exitosamente")
                     return True
+                
                 else:
                     self.get_logger().warn(f"Tarea falló con resultado: {result}")
                     return False
