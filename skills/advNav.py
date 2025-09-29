@@ -4,7 +4,7 @@ from nav2_msgs.srv import ClearEntireCostmap
 import math
 import os
 from typing import Dict, Optional, List
-from .skills import RobotSkills
+from .basicNav import RobotSkills
 
 
 class AdvancedNavigation:
