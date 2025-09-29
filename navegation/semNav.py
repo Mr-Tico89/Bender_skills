@@ -154,58 +154,6 @@ class SemanticNavigation:
         return self.robot.list_available_locations()
 
 
-def main():
-    """Ejemplo de uso de navegación semántica"""
-    rclpy.init()
-    
-    try:
-        # Crear robot básico
-        robot = RobotSkills()
-        
-        # Crear navegación semántica
-        semantic_nav = SemanticNavigation(robot)
-        
-        print("Demo de Navegación Semántica")
-        
-        # Guardar algunas ubicaciones de ejemplo
-        robot.save_current_pose("base", "Punto base del robot")
-        
-        # Navegar a coordenadas y guardar
-        robot.go_to_pose(2.0, 0.0, 0.0)
-        robot.wait_for_result()
-        robot.save_current_pose("punto_a", "Primer punto de interés")
-        
-        robot.go_to_pose(0.0, 2.0, math.pi/2)
-        robot.wait_for_result()
-        robot.save_current_pose("punto_b", "Segundo punto de interés")
-        
-        # Demo de navegación semántica
-        print("\n1. Ubicaciones disponibles:", semantic_nav.get_available_locations())
-        
-        print("\n2. Navegación semántica:")
-        semantic_nav.go("base")
-        semantic_nav.robot.wait_for_result()
-        
-        print("\n3. Approach con distancia:")
-        semantic_nav.approach("punto_a", approach_distance=0.8)
-        semantic_nav.robot.wait_for_result()
-        
-        print("\n4. Mirar hacia ubicación:")
-        semantic_nav.look("punto_b")
-        
-        print("\n5. Patrullaje:")
-        semantic_nav.patrol(["base", "punto_a", "punto_b"], cycles=2)
-        
-        print("\nDemo de navegación semántica completado!")
-        
-    except KeyboardInterrupt:
-        print("\nInterrumpido por el usuario")
-        
-    finally:
-        if 'robot' in locals():
-            robot.destroy_node()
-        rclpy.shutdown()
-
-
 if __name__ == '__main__':
-    main()
+    print("SemanticNavigation - Navegación Semántica")
+    print("Para ejemplos completos, usar: navegation/demo/demo_modular_navigation.py")

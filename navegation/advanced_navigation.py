@@ -13,7 +13,7 @@ class AdvancedNavigation:
     que extienden las capacidades básicas de RobotSkills.
     """
     
-    
+
     def __init__(self, robot_skills: RobotSkills):
         """
         Inicializa la navegación avanzada.
@@ -161,5 +161,5 @@ class AdvancedNavigation:
 
 
 if __name__ == '__main__':
-    print("AdvancedNavigation - Gestión Avanzada de Poses y Costmaps")
-    print("Para ejemplos completos, usar: navegation/demo/demo_complete_modular.py")
+    print("AdvancedNavigation - Gestión Avanzada")
+    print("Para ejemplos completos, usar demos en /navegation/demo/")

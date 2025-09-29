@@ -305,7 +305,6 @@ class RobotSkills(Node):
         self.cancel()
         return False
 
-
     
     def stop(self):
         """CFunción auxiliar para detener el robot"""
@@ -321,46 +320,6 @@ class RobotSkills(Node):
             self.rotation_timer = None
 
 
-
-def main():
-    """Ejemplo básico de uso de las skills"""
-    rclpy.init()
-    
-    try:
-        robot = RobotSkills()
-        print("Robot Skills iniciado!")
-        
-        # Ejemplo básico
-        print("\n ¿Dónde estoy?")
-        current_pose = robot.where_am_i()
-        
-        if current_pose:
-            print(f" Posición: ({current_pose['x']:.2f}, {current_pose['y']:.2f})")
-            
-            print("\n Guardando posición actual...")
-            robot.save_current_pose("inicio", "Punto de inicio")
-            
-            print("\n Navegando a (2.0, 1.0)...")
-            robot.go_to_pose(2.0, 1.0, yaw=math.pi/2)
-            
-            print("\n Esperando a llegar...")
-            while robot.is_moving() and rclpy.ok():
-                rclpy.spin_once(robot, timeout_sec=0.5)
-                
-            if robot.reached():
-                print(" ¡Llegué!")
-                robot.rotate(angular_speed=0.5, duration=2.0)
-                
-        print("\n Ejemplo completado!")
-        
-    except KeyboardInterrupt:
-        print("\n Interrumpido por el usuario")
-        
-    finally:
-        if 'robot' in locals():
-            robot.destroy_node()
-        rclpy.shutdown()
-
-
 if __name__ == '__main__':
-    main()
+    print("RobotSkills - Navegación Básica")
+    print("Para ejemplos completos, usar: navegation/demo/demo_skills_complete.py")
