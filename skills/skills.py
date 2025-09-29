@@ -38,7 +38,7 @@ class RobotSkills(Node):
         self.goal_handle = None
         self.is_executing_goal = False
         self.current_velocity = Twist()
-        self.saved_poses_file = "saved_poses.json"
+        self.saved_poses_file = "saved_poses.npy"
         
         # Inicializar poses guardadas (el mapeo lo maneja otro componente)
         self.load_saved_poses()
@@ -248,8 +248,7 @@ class RobotSkills(Node):
         
         # Guardar en archivo
         try:
-            with open(self.saved_poses_file, 'w') as f:
-                json.dump(saved_poses, f, indent=2)
+            np.save(self.saved_poses_file, saved_poses)
             
             self.get_logger().info(f"Pose guardada como '{name}': {pose_data}")
             return True
@@ -280,6 +279,7 @@ class RobotSkills(Node):
                 
                 if future.result() is not None:
                     self.get_logger().info("Costmap global limpiado")
+                    
                 else:
                     self.get_logger().warn("Error limpiando costmap global")
                     success = False
@@ -359,14 +359,12 @@ class RobotSkills(Node):
         """Carga las poses guardadas desde archivo"""
         try:
             if os.path.exists(self.saved_poses_file):
-                with open(self.saved_poses_file, 'r') as f:
-                    self.saved_poses = json.load(f)
+                self.saved_poses = np.load(self.saved_poses_file, allow_pickle=True).item()
                 self.get_logger().info(f"Poses guardadas cargadas desde {self.saved_poses_file}")
             else:
                 self.saved_poses = {}
                 # Crear archivo vacío
-                with open(self.saved_poses_file, 'w') as f:
-                    json.dump(self.saved_poses, f, indent=2)
+                np.save(self.saved_poses_file, self.saved_poses)
                 self.get_logger().info("Archivo de poses creado (vacío)")
         except Exception as e:
             self.get_logger().error(f"Error cargando poses: {e}")
