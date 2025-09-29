@@ -44,12 +44,11 @@ class RobotSkills(Node):
         # Inicializar poses guardadas (el mapeo lo maneja otro componente)
         self.load_saved_poses()
 
+
     def velocity_callback(self, msg):
         """Callback para monitorear la velocidad actual del robot"""
         self.current_velocity = msg
 
-
-    # ===== FUNCIONES BÁSICAS MEJORADAS =====
 
     def where_am_i(self) -> Optional[Dict]:
         """
@@ -88,7 +87,6 @@ class RobotSkills(Node):
             return None
 
 
-    
     def go_to_pose(self, x=None, y=None, yaw=0.0, pose_stamped=None, frame_id='map'):
         """
         Navega a una pose usando coordenadas individuales O un PoseStamped completo.
@@ -144,7 +142,6 @@ class RobotSkills(Node):
             return False
 
 
-    # Cancelar navegación (versión mejorada)
     def cancel(self) -> bool:
         """
         Cancela el último objetivo de navegación entregado.
@@ -167,7 +164,6 @@ class RobotSkills(Node):
             return False
 
 
-    # ¿Se está moviendo?
     def is_moving(self, linear_threshold: float = 0.01, angular_threshold: float = 0.01) -> bool:
         """
         Determina si el robot se está moviendo actualmente.
@@ -271,117 +267,6 @@ class RobotSkills(Node):
             return False
 
 
-    # Función auxiliar para detener el robot
-    def stop(self):
-        msg = Twist()
-        self.cmd_pub.publish(msg)
-    
-
-    def stop_rotation_callback(self):
-        """Callback para detener rotación automáticamente"""
-        self.stop()
-        if self.rotation_timer:
-            self.rotation_timer.destroy()
-            self.rotation_timer = None
-
-
-    # ===== NUEVAS FUNCIONES DE NAVEGACIÓN AVANZADA =====
-
-    def save_current_pose(self, name: str, description: str = "") -> bool:
-        """
-        Guarda la pose actual del robot con un nombre para uso posterior.
-        
-        Args:
-            name: Nombre para identificar la pose guardada
-            description: Descripción opcional de la pose
-            
-        Returns:
-            True si se guardó exitosamente, False en caso contrario
-        """
-
-        current_pose = self.where_am_i()
-        if current_pose is None:
-            return False
-            
-        pose_data = {
-            "x": current_pose["x"],
-            "y": current_pose["y"],
-            "yaw": current_pose["yaw"],
-            "description": description,
-            "timestamp": time.time()
-        }
-        
-        # Cargar poses existentes
-        saved_poses = self.load_saved_poses()
-        saved_poses[name] = pose_data
-        
-        # Guardar en archivo
-        try:
-            np.save(self.saved_poses_file, saved_poses)
-            
-            self.get_logger().info(f"Pose guardada como '{name}': {pose_data}")
-            return True
-        
-        except Exception as e:
-            self.get_logger().error(f"Error guardando pose: {e}")
-            return False
-
-
-    def clear_costmaps(self) -> bool:
-        """
-        Resetea los costmaps local y global del stack de navegación en paralelo.
-        
-        Returns:
-            True si se limpiaron exitosamente, False en caso contrario
-        """
-        
-        # Verificar que ambos servicios estén disponibles
-        global_available = self.clear_costmap_client.wait_for_service(timeout_sec=5.0)
-        local_available = self.clear_local_costmap_client.wait_for_service(timeout_sec=5.0)
-        
-        if not global_available:
-            self.get_logger().warn("Servicio de costmap global no disponible")
-
-        if not local_available:
-            self.get_logger().warn("Servicio de costmap local no disponible")
-            
-        if not (global_available or local_available):
-            return False
-        
-        # Iniciar ambas solicitudes en paralelo
-        futures = []
-        
-        try:
-            # Lanzar solicitud para costmap global
-            if global_available:
-                global_request = ClearEntireCostmap.Request()
-                global_future = self.clear_costmap_client.call_async(global_request)
-                futures.append(('global', global_future))
-            
-            # Lanzar solicitud para costmap local
-            if local_available:
-                local_request = ClearEntireCostmap.Request()
-                local_future = self.clear_local_costmap_client.call_async(local_request)
-                futures.append(('local', local_future))
-            
-            # Esperar que ambos terminen
-            success = True
-            for costmap_type, future in futures:
-                rclpy.spin_until_future_complete(self, future, timeout_sec=5.0)
-                
-                if future.result() is not None:
-                    self.get_logger().info(f"Costmap {costmap_type} limpiado")
-                else:
-                    self.get_logger().warn(f"Error limpiando costmap {costmap_type}")
-                    success = False
-            
-            return success
-            
-        except Exception as e:
-            self.get_logger().error(f"Error limpiando costmaps: {e}")
-            return False
-
-
     def wait_for_result(self, timeout: float = 60.0) -> bool:
         """
         Espera de manera bloqueante que el robot complete la tarea actual.
@@ -422,35 +307,21 @@ class RobotSkills(Node):
         return False
 
 
-    # ===== FUNCIONES AUXILIARES =====
+    
+    def stop(self):
+        """CFunción auxiliar para detener el robot"""
+        msg = Twist()
+        self.cmd_pub.publish(msg)
+    
+
+    def stop_rotation_callback(self):
+        """Callback para detener rotación automáticamente"""
+        self.stop()
+        if self.rotation_timer:
+            self.rotation_timer.destroy()
+            self.rotation_timer = None
 
 
-    def load_saved_poses(self) -> Dict:
-        """Carga las poses guardadas desde archivo"""
-        try:
-            if os.path.exists(self.saved_poses_file):
-                self.saved_poses = np.load(self.saved_poses_file, allow_pickle=True).item()
-                self.get_logger().info(f"Poses guardadas cargadas desde {self.saved_poses_file}")
-            else:
-                self.saved_poses = {}
-                # Crear archivo vacío
-                np.save(self.saved_poses_file, self.saved_poses)
-                self.get_logger().info("Archivo de poses creado (vacío)")
-        except Exception as e:
-            self.get_logger().error(f"Error cargando poses: {e}")
-            self.saved_poses = {}
-            
-        return self.saved_poses
-
-
-    def list_available_locations(self) -> List[str]:
-        """Retorna lista de ubicaciones disponibles"""
-        return list(self.saved_poses.keys())
-
-
-    def get_pose_info(self, location_name: str) -> Optional[Dict]:
-        """Obtiene información detallada de una pose guardada"""
-        return self.saved_poses.get(location_name)
 
 def main():
     """Ejemplo básico de uso de las skills"""
