@@ -149,9 +149,6 @@ class SemanticNavigation:
         return self.robot.rotate_improved(rotation_speed, duration)
 
 
-    def get_available_locations(self) -> list:
-        """Retorna lista de ubicaciones disponibles para navegación semántica"""
-        return self.robot.list_available_locations()
 
 
 if __name__ == '__main__':
