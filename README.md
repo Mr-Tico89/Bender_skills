@@ -276,7 +276,10 @@ saved_poses = np.load("saved_poses.npy", allow_pickle=True).item()
 
 ## 📚 Documentación y Referencias
 
-### Archivos del Sistema
+### 📖 Guía Completa
+- **[`COMPLETE_GUIDE.md`](./COMPLETE_GUIDE.md)** - **Guía completa del sistema** con ejemplos detallados, casos de uso y mejores prácticas
+
+### Archivos del Sistema  
 - `navegation/basicNav.py` - RobotSkills (8 funciones básicas)
 - `navegation/advNav.py` - AdvancedNavigation (5 funciones avanzadas)
 - `navegation/semNav.py` - SemanticNavigation (8 funciones semánticas)
