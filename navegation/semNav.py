@@ -149,7 +149,26 @@ class SemanticNavigation:
         return self.robot.rotate_improved(rotation_speed, duration)
 
 
+    def is_in_room(self)-> bool:   
+        """
+        Determina si el robot está en una habitación
+         
+        Returns:
+            
+        """
+        
+        return True
+    
+    
+    def is_in_map(self)-> bool:
+        """
+        Determina si el robot está dentro de una zona conocida dentro del mapa.
 
+        Returns:
+            
+        """
+        return True
+    
 
 if __name__ == '__main__':
     print("SemanticNavigation - Navegación Semántica")
