@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
-package_name = 'robot_skills'
+package_name = 'bender_skills'
 
 setup(
     name=package_name,
-    version='1.0.0',
+    version='2.0.0',
     packages=find_packages(),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -13,24 +13,39 @@ setup(
     ],
     install_requires=[
         'setuptools',
+        # Core ROS2
         'rclpy',
-        'geometry_msgs',
+        # Navigation and geometry
         'nav2_simple_commander',
+        'nav2_msgs', 
+        'geometry_msgs',
+        # Transformations
         'tf_transformations',
-        'nav2_msgs',
-        'std_srvs',
         'tf2_ros',
         'tf2_geometry_msgs',
+        # Services
+        'std_srvs',
+        # Scientific computing
         'numpy',
     ],
     zip_safe=True,
-    description='Skills simples para robot en ROS2',
+    description='Sistema de navegación robótica modular para ROS2 - Bender Skills con arquitectura de 3 capas',
     license='MIT',
+    maintainer='Robotica Team',
+    maintainer_email='robotica@bender.com',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'robot_skills = skills.skills:main',
-            'ejemplo_simple = ejemplo_simple:main',
+            # Tests especializados por módulo
+            'basic_test = navegation.demo.basicTest:main',
+            'adv_test = navegation.demo.advTest:main', 
+            'sem_test = navegation.demo.semTest:main',
+            # Verificación de módulos
+            'test_modules = navegation.demo.test_modules:main',
+            # Módulos principales (para importación directa)
+            'basic_nav = navegation.basicNav:main',
+            'sem_nav = navegation.semNav:main',
+            'adv_nav = navegation.advNav:main',
         ],
     },
 )
