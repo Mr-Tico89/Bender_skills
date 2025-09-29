@@ -47,6 +47,7 @@ class RobotSkills(Node):
         """Callback para monitorear la velocidad actual del robot"""
         self.current_velocity = msg
 
+
     # ===== FUNCIONES BÁSICAS MEJORADAS =====
 
     def where_am_i(self) -> Optional[Dict]:
@@ -57,6 +58,7 @@ class RobotSkills(Node):
             Dict con x, y, yaw si es exitoso, None si hay error
         """
         pose = self.navigator.getCurrentPose()
+
         if pose:
             x = pose.pose.position.x
             y = pose.pose.position.y
@@ -77,6 +79,7 @@ class RobotSkills(Node):
             self.get_logger().info(
                 f"Posición actual: x={x:.2f}, y={y:.2f}, yaw={math.degrees(yaw):.1f}°"
             )
+
             return result
         
         else:
@@ -84,8 +87,9 @@ class RobotSkills(Node):
             return None
 
 
-    # Enviar al robot a una pose
+    
     def go_to_pose(self, x, y, yaw=0.0):
+        # Enviar al robot a una pose
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'odom'
         goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
@@ -171,6 +175,7 @@ class RobotSkills(Node):
                 if result == TaskResult.SUCCEEDED:
                     self.get_logger().info("Meta alcanzada por Nav2")
                     return True
+                
                 else:
                     self.get_logger().warn("No se alcanzó la meta según Nav2")
                     return False
@@ -185,8 +190,7 @@ class RobotSkills(Node):
                 return False
                 
             distance = math.sqrt(
-                (current_pose["x"] - target_x)**2 + 
-                (current_pose["y"] - target_y)**2
+                (current_pose["x"] - target_x)**2 + (current_pose["y"] - target_y)**2
             )
             
             return distance <= position_tolerance
@@ -201,15 +205,16 @@ class RobotSkills(Node):
         self.cmd_pub.publish(msg)
 
         # Esperar durante la duración especificada
-        import time
         time.sleep(duration)
         self.stop()
         self.get_logger().info(f"Rotación completada durante {duration} s")
+
 
     # Función auxiliar para detener el robot
     def stop(self):
         msg = Twist()
         self.cmd_pub.publish(msg)
+
 
     # ===== NUEVAS FUNCIONES DE NAVEGACIÓN AVANZADA =====
 
@@ -254,6 +259,7 @@ class RobotSkills(Node):
             return False
 
     # Nota: is_in_room() e is_in_map() son manejadas por el componente de mapeo
+
 
     def clear_costmaps(self) -> bool:
         """
@@ -307,6 +313,7 @@ class RobotSkills(Node):
             
         return success
 
+
     def wait_for_result(self, timeout: float = 60.0) -> bool:
         """
         Espera de manera bloqueante que el robot complete la tarea actual.
@@ -344,7 +351,9 @@ class RobotSkills(Node):
         self.cancel()
         return False
 
+
     # ===== FUNCIONES AUXILIARES =====
+
 
     def load_saved_poses(self) -> Dict:
         """Carga las poses guardadas desde archivo"""
@@ -365,9 +374,11 @@ class RobotSkills(Node):
             
         return self.saved_poses
 
+
     def list_available_locations(self) -> List[str]:
         """Retorna lista de ubicaciones disponibles"""
         return list(self.saved_poses.keys())
+
 
     def get_pose_info(self, location_name: str) -> Optional[Dict]:
         """Obtiene información detallada de una pose guardada"""
